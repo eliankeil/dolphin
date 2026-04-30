@@ -295,6 +295,7 @@ struct VideoConfig final
   int iSafeTextureCache_ColorSamples = 0;
   float fAspectRatioHackW = 1;  // Initial value needed for the first frame
   float fAspectRatioHackH = 1;
+  float fWidescreenHackStrength = 1.0f; // valor por defecto = 100%
   bool bEnablePixelLighting = false;
   bool bFastDepthCalc = false;
   bool bVertexRounding = false;
