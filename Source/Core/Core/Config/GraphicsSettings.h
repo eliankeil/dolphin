@@ -29,6 +29,9 @@ extern const Info<bool> GFX_VSYNC;
 extern const Info<int> GFX_ADAPTER;
 
 // Graphics.Settings
+// Graphics.Settings
+
+extern const Info<float> GFX_WIDESCREEN_HACK_STRENGTH;
 
 extern const Info<bool> GFX_WIDESCREEN_HACK;
 extern const Info<AspectMode> GFX_ASPECT_RATIO;
