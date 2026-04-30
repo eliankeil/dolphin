@@ -654,14 +654,12 @@ void Presenter::UpdateDrawRectangle()
   const float draw_aspect_ratio = CalculateDrawAspectRatio();
 
   // Update aspect ratio hack values
-  // Won't take effect until next frame
-  // Don't know if there is a better place for this code so there isn't a 1 frame delay
   if (g_ActiveConfig.bWidescreenHack)
-{
+  {
     const auto& vi = Core::System::GetInstance().GetVideoInterface();
     float source_aspect_ratio = vi.GetAspectRatio();
     if (g_widescreen->IsGameWidescreen())
-        source_aspect_ratio = SourceAspectRatioToWidescreen(source_aspect_ratio);
+      source_aspect_ratio = SourceAspectRatioToWidescreen(source_aspect_ratio);
 
     const float adjust = source_aspect_ratio / draw_aspect_ratio;
 
@@ -670,28 +668,22 @@ void Presenter::UpdateDrawRectangle()
 
     if (adjust > 1)
     {
-        // Vert+
-        g_Config.fAspectRatioHackW = 1.0f * strength;
-        g_Config.fAspectRatioHackH = (1.0f / adjust) * strength;
+      // Vert+
+      g_Config.fAspectRatioHackW = 1.0f * strength;
+      g_Config.fAspectRatioHackH = (1.0f / adjust) * strength;
     }
     else
     {
-        // Hor+
-        g_Config.fAspectRatioHackW = adjust * strength;
-        g_Config.fAspectRatioHackH = 1.0f * strength;
+      // Hor+
+      g_Config.fAspectRatioHackW = adjust * strength;
+      g_Config.fAspectRatioHackH = 1.0f * strength;
     }
-}
-else
-{
-    g_Config.fAspectRatioHackW = 1.0f;
-    g_Config.fAspectRatioHackH = 1.0f;
-}
-
+  }
   else
   {
-    // Hack is disabled.
-    g_Config.fAspectRatioHackW = 1;
-    g_Config.fAspectRatioHackH = 1;
+    // Hack desactivado
+    g_Config.fAspectRatioHackW = 1.0f;
+    g_Config.fAspectRatioHackH = 1.0f;
   }
 
   // The rendering window size
@@ -699,23 +691,16 @@ else
   const float win_height = static_cast<float>(m_backbuffer_height);
   const float win_aspect_ratio = win_width / win_height;
 
-  // FIXME: this breaks at very low widget sizes
-  // Make ControllerInterface aware of the render window region actually being used
-  // to adjust mouse cursor inputs.
-  // This also fails to acknowledge "g_ActiveConfig.bCrop".
   g_controller_interface.SetAspectRatioAdjustment(draw_aspect_ratio / win_aspect_ratio);
 
   float draw_width = draw_aspect_ratio;
   float draw_height = 1;
 
-  // Crop the picture to a standard aspect ratio. (if enabled)
   auto [crop_width, crop_height] = ApplyStandardAspectCrop(draw_width, draw_height);
   const float crop_aspect_ratio = crop_width / crop_height;
 
-  // scale the picture to fit the rendering window
   if (win_aspect_ratio >= crop_aspect_ratio)
   {
-    // the window is flatter than the picture
     draw_width *= win_height / crop_height;
     crop_width *= win_height / crop_height;
     draw_height *= win_height / crop_height;
@@ -723,7 +708,6 @@ else
   }
   else
   {
-    // the window is skinnier than the picture
     draw_width *= win_width / crop_width;
     draw_height *= win_width / crop_width;
     crop_height *= win_width / crop_width;
@@ -735,8 +719,6 @@ else
 
   if (g_ActiveConfig.aspect_mode != AspectMode::Raw || !m_xfb_entry)
   {
-    // Find the best integer resolution: the closest aspect ratio with the least black bars.
-    // This should have no influence if "AspectMode::Stretch" is active.
     const float updated_draw_aspect_ratio = draw_width / draw_height;
     const auto int_draw_res =
         FindClosestIntegerResolution(draw_width, draw_height, updated_draw_aspect_ratio);
@@ -749,7 +731,6 @@ else
         TryToSnapToXFBSize(int_draw_width, int_draw_height, m_xfb_rect.GetWidth(),
                            m_xfb_rect.GetHeight());
       }
-      // We can't draw something bigger than the window, it will crop
       int_draw_width = std::min(int_draw_width, static_cast<int>(win_width));
       int_draw_height = std::min(int_draw_height, static_cast<int>(win_height));
     }
@@ -765,6 +746,7 @@ else
   m_target_rectangle.right = m_target_rectangle.left + int_draw_width;
   m_target_rectangle.bottom = m_target_rectangle.top + int_draw_height;
 }
+
 
 std::tuple<float, float> Presenter::ScaleToDisplayAspectRatio(const int width, const int height,
                                                               bool allow_stretch) const
