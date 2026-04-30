@@ -84,8 +84,9 @@ void VideoConfig::Refresh()
   iAdapter = Config::Get(Config::GFX_ADAPTER);
   iManuallyUploadBuffers = Config::Get(Config::GFX_MTL_MANUALLY_UPLOAD_BUFFERS);
   iUsePresentDrawable = Config::Get(Config::GFX_MTL_USE_PRESENT_DRAWABLE);
-
+  
   bWidescreenHack = Config::Get(Config::GFX_WIDESCREEN_HACK);
+  fWidescreenHackStrength = Config::Get(Config::GFX_WIDESCREEN_HACK_STRENGTH);
   aspect_mode = Config::Get(Config::GFX_ASPECT_RATIO);
   custom_aspect_width = Config::Get(Config::GFX_CUSTOM_ASPECT_RATIO_WIDTH);
   custom_aspect_height = Config::Get(Config::GFX_CUSTOM_ASPECT_RATIO_HEIGHT);
