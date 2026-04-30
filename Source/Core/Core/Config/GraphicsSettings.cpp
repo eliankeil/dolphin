@@ -17,7 +17,6 @@ const Info<bool> GFX_VSYNC{{System::GFX, "Hardware", "VSync"}, false};
 const Info<int> GFX_ADAPTER{{System::GFX, "Hardware", "Adapter"}, 0};
 
 // Graphics.Settings
-// Graphics.Settings
 
 const Info<float> GFX_WIDESCREEN_HACK_STRENGTH{
     {System::GFX, "Settings", "WidescreenHackStrength"}, 1.0f};
