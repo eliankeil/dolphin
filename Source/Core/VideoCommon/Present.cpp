@@ -657,28 +657,36 @@ void Presenter::UpdateDrawRectangle()
   // Won't take effect until next frame
   // Don't know if there is a better place for this code so there isn't a 1 frame delay
   if (g_ActiveConfig.bWidescreenHack)
-  {
+{
     const auto& vi = Core::System::GetInstance().GetVideoInterface();
     float source_aspect_ratio = vi.GetAspectRatio();
-    // If the game is meant to be in widescreen (or forced to),
-    // scale the source aspect ratio to it.
     if (g_widescreen->IsGameWidescreen())
-      source_aspect_ratio = SourceAspectRatioToWidescreen(source_aspect_ratio);
+        source_aspect_ratio = SourceAspectRatioToWidescreen(source_aspect_ratio);
 
     const float adjust = source_aspect_ratio / draw_aspect_ratio;
+
+    // Nuevo: factor porcentual configurable
+    float strength = g_ActiveConfig.fWidescreenHackStrength; // ej. 0.85f = 85%
+
     if (adjust > 1)
     {
-      // Vert+
-      g_Config.fAspectRatioHackW = 1;
-      g_Config.fAspectRatioHackH = 1 / adjust;
+        // Vert+
+        g_Config.fAspectRatioHackW = 1.0f * strength;
+        g_Config.fAspectRatioHackH = (1.0f / adjust) * strength;
     }
     else
     {
-      // Hor+
-      g_Config.fAspectRatioHackW = adjust;
-      g_Config.fAspectRatioHackH = 1;
+        // Hor+
+        g_Config.fAspectRatioHackW = adjust * strength;
+        g_Config.fAspectRatioHackH = 1.0f * strength;
     }
-  }
+}
+else
+{
+    g_Config.fAspectRatioHackW = 1.0f;
+    g_Config.fAspectRatioHackH = 1.0f;
+}
+
   else
   {
     // Hack is disabled.
