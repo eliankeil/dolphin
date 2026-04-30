@@ -23,6 +23,14 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Cache build
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ github.workspace }}/build
+          ${{ github.workspace }}/Externals
+        key: ${{ runner.os }}-${{ matrix.build_type }}-${{ hashFiles('CMakeLists.txt') }}
+
     - name: Set reusable strings
       id: strings
       shell: bash
@@ -37,15 +45,19 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -S ${{ github.workspace }}
 
-    - name: Build
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+    - name: Build (parallel)
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} -- /m
 
+    # Tests opcionales: solo en PRs
     - name: Test
+      if: github.event_name == 'pull_request'
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ctest --build-config ${{ matrix.build_type }}
+      run: ctest --build-config ${{ matrix.build_type }} --output-on-failure -j2
 
-    - name: Upload Dolphin executable
+    - name: Upload Dolphin executable + DLLs
       uses: actions/upload-artifact@v4
       with:
         name: dolphin-windows-${{ matrix.build_type }}
-        path: ${{ steps.strings.outputs.build-output-dir }}/Binary/x64/${{ matrix.build_type }}/dolphin-emu.exe
+        path: |
+          ${{ steps.strings.outputs.build-output-dir }}/Binary/x64/${{ matrix.build_type }}/dolphin-emu.exe
+          ${{ steps.strings.outputs.build-output-dir }}/Binary/x64/${{ matrix.build_type }}/*.dll
